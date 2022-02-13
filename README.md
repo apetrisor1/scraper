@@ -23,6 +23,7 @@ Cron -> |Entry  | -> | Proxy#1 | -> API | -> | Proxy#4 | -> | OpenSearch & dynam
 ..... and so on
 
 # Pre-requisites
+Install the aws CLI
 Make sure you have the correct ```~/.aws/credentials```
 
 ```
