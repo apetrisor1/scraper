@@ -14,7 +14,6 @@ Before start, scraper must be prepared by calling ```entryURL/start```. This set
 Whenever user wants, scraper can be stopped by calling ```entryURL/stop```. This sets the overall status to busy, which prevents further calls to proxies.
 
 <b>TODO: When scraper is detected as stopped, cron to be shut down programatically.</b>
-
 Cron -> |Entry  | -> | Proxy   | -> API | -> | Proxy   | -> | ElasticSearch & dynamoDB
 ---     | ---   | ---| ---     | ---    | ---| ---     | ---| ---
 Cron -> |Scrape | -> | Proxy#1 | -> API | -> | Proxy#2 | -> | ElasticSearch & dynamoDB
