@@ -31,19 +31,20 @@ Make sure you have the correct ```~/.aws/credentials```
 npm install -g serverless
 ```
 
-# Deploy resources first as a separate step
+# Steps
+## 1. Deploy dynamoDB
 
 This is done because we'll be deploying multiple proxies at once and we need to give IAM permissions for lambdas
 to that specific dynamoDB.
 
 ```
-cd root/infrastructure
+cd root/dynamoDB
 sh deploy.sh
 ```
 
-Copy the DB ARN into the IAM part of ```proxy/serverless.yml``` and ```scrape/serverless.yml```
+Copy the DB ARN into the IAM part of ```proxy/serverless.yml``` and ```entry/serverless.yml```
 
-# Deploying proxies
+## 2. Deploying multiple proxy Lambdas at once
 First you must deploy the <b>Proxy</b> service.
 ```
 cd root/proxy
@@ -53,7 +54,6 @@ touch .env
 Fill the ```DATA_URL``` endpoint in .env. <b>Taking data from here.</b>
 
 Fill the ```OPENSEARCH``` credentials in .env. <b>Putting data here.</b>
-# Deploying multiple proxy Lambdas at once
 
 Deploy your desired number of proxies (see below).
 ```
@@ -61,7 +61,7 @@ From root/proxy: sh deploy.sh 5
 ```
 Note: If you use ```deploy.sh```, you will have to <b>destroy</b> and <b>get information</b> about the lambdas with ```destroy.sh``` and ```detail.sh``` respectively, as the Serverless service names will be proxy1, proxy2 etc. instead of proxy, which breaks the Serverless CLI functionality.
 
-# Destroying multiple proxy Lambdas at once
+## Destroying multiple proxy Lambdas at once
 
 Run ```destroy.sh```, with your current number of proxies as an argument (must match your current number of proxies to delete all lambdas and their associated resources).
 
@@ -75,7 +75,7 @@ Run ```detail.sh```, with your current number of proxies as an argument (must ma
 Example: sh detail.sh 5
 ```
 
-# Deploying entry service
+## 3. Deploying entry service
 ```
 cd root/entry
 npm install
