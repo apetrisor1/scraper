@@ -1,4 +1,4 @@
-service: scrape
+service: entry
 frameworkVersion: '3'
 
 provider:
@@ -24,7 +24,7 @@ provider:
             - "arn:aws:dynamodb:eu-central-1:552798860484:table/lambda"
 
 functions:
-  scrape:
+  startScrapeFlow:
     handler: handler.handler
     events:
       - httpApi: '*'

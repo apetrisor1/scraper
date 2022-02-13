@@ -7,7 +7,7 @@ HOW_MANY="${1:-2}"
 # Creating a backup of serverless.yml
 cp ./serverless.yml ./backup.yml
 
-rm ../scrape/proxy-urls.txt
+rm ../entry/proxy-urls.txt
 
 echo ""
 echo "Deploying $HOW_MANY proxies to AWS..."
@@ -16,7 +16,7 @@ for (( i=1; i<=$HOW_MANY; i++ ))
 do
   perl -i -pe"s/service: proxy.*/service: proxy$i/g" ./serverless.yml
   sls deploy
-  sls info | grep endpoint | sed 's/endpoint: ANY - //g' >> ../scrape/proxy-urls.txt
+  sls info | grep endpoint | sed 's/endpoint: ANY - //g' >> ../entry/proxy-urls.txt
 done
 
 # Deleting serverless.yml backup

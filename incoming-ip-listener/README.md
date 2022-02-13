@@ -27,4 +27,4 @@ await axios({ method: "GET", url: 'http://3e57-188-24-63-199.ngrok.io' })
 ```
 
 5. Watch the terminal and look at incoming IP's.
-Call the scrapper lambda, which does a round-robin through the proxy lambdas.
+Call the entry lambda, which does a round-robin through the proxy lambdas.

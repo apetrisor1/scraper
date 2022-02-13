@@ -24,7 +24,7 @@ provider:
             - "arn:aws:dynamodb:eu-central-1:552798860484:table/lambda"
 
 functions:
-  proxy:
+  scrape:
     handler: handler.handler
     events:
       - httpApi: '*'

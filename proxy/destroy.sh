@@ -7,7 +7,7 @@ HOW_MANY="${1:-2}"
 # Creating a backup of serverless.yml
 cp ./serverless.yml ./backup.yml
 
-rm ../scrape/proxy-urls.txt
+rm ../entry/proxy-urls.txt
 
 echo ""
 echo "Removing $HOW_MANY proxies from AWS..."
