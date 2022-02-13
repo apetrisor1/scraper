@@ -12,7 +12,6 @@ const {
   setProxyBusyStatus
 } = require('./dynamoDB')
 
-// Data format is use-case specific
 const extractFormattedData = (rawData) => {
   const { data } = rawData
   const { data: { results } } = data
