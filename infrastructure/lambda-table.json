@@ -1,0 +1,19 @@
+{
+  "TableName": "lambda",
+  "KeySchema": [
+    {
+      "AttributeName": "index",
+      "KeyType": "HASH"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "index",
+      "AttributeType": "N"
+    }
+  ],
+  "ProvisionedThroughput": {
+    "ReadCapacityUnits": 1,
+    "WriteCapacityUnits": 1
+  }
+}
