@@ -1,7 +1,7 @@
 # Description
-This project uses AWS lambda to hit an API URL through multiple proxies once every N seconds and stores the retrieved data in an OpenSearch-like database.
+This project uses AWS lambda to hit an API through one of N proxies and stores the retrieved data in an OpenSearch-like database.
 
-Entry lambda triggered by any cron mechanism, which should call ```https://entryURL``` (URL received after deploying <b>entry</b> service).
+Entry lambda can be triggered manually or by any cron mechanism, by doing a POST call to ```https://entryURL``` (URL received after deploying <b>entry</b> service).
 
 Entry lambda hits each proxy lambda in a round-robin fashion, proxy hits the URL we're interested in
 and stores the data.
