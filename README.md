@@ -16,10 +16,10 @@ Storing data can be stopped by calling ```https://entryURL/stop```. This sets th
 <b>TODO: When scraper is detected as stopped, cron should be shut down programatically.</b>
 Cron -> |Entry  | -> | Proxy   | -> API | -> | Proxy   | -> | OpenSearch & dynamoDB
 ---     | ---   | ---| ---     | ---    | ---| ---     | ---| ---
-Cron -> |Entry  | -> | Proxy#1 | -> API | -> | Proxy#2 | -> | OpenSearch & dynamoDB
-Cron -> |Entry  | -> | Proxy#2 | -> API | -> | Proxy#3 | -> | OpenSearch & dynamoDB
-Cron -> |Entry  | -> | Proxy#3 | -> API | -> | Proxy#4 | -> | OpenSearch & dynamoDB
-Cron -> |Entry  | -> | Proxy#1 | -> API | -> | Proxy#4 | -> | OpenSearch & dynamoDB
+Cron -> |Entry  | -> | Proxy#1 | -> API | -> | Proxy#1 | -> | OpenSearch & dynamoDB
+Cron -> |Entry  | -> | Proxy#2 | -> API | -> | Proxy#2 | -> | OpenSearch & dynamoDB
+Cron -> |Entry  | -> | Proxy#3 | -> API | -> | Proxy#3 | -> | OpenSearch & dynamoDB
+Cron -> |Entry  | -> | Proxy#1 | -> API | -> | Proxy#1 | -> | OpenSearch & dynamoDB
 ..... and so on
 
 # Pre-requisites
