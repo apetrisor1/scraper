@@ -15,12 +15,12 @@ Whenever user wants, scraper can be stopped by calling ```entryURL/stop```. This
 
 <b>TODO: When scraper is detected as stopped, cron to be shut down programatically.</b>
 
-Cron -> |Entry   | ---> | Proxy   | ---> API | ---> | Proxy   | ---> | ElasticSearch & dynamoDB
----     | ---    | ---  | ---     | ---      | ---  | ---     | ---  | ---
-Cron -> |Scrape | ---> | Proxy#1 | ---> API | ---> | Proxy#2 | ---> | ElasticSearch & dynamoDB
-Cron -> |Scrape | ---> | Proxy#2 | ---> API | ---> | Proxy#3 | ---> | ElasticSearch & dynamoDB
-Cron -> |Scrape | ---> | Proxy#3 | ---> API | ---> | Proxy#4 | ---> | ElasticSearch & dynamoDB
-Cron -> |Scrape | ---> | Proxy#1 | ---> API | ---> | Proxy#4 | ---> | ElasticSearch & dynamoDB
+Cron -> |Entry  | -> | Proxy   | -> API | -> | Proxy   | -> | ElasticSearch & dynamoDB
+---     | ---   | ---| ---     | ---    | ---| ---     | ---| ---
+Cron -> |Scrape | -> | Proxy#1 | -> API | -> | Proxy#2 | -> | ElasticSearch & dynamoDB
+Cron -> |Scrape | -> | Proxy#2 | -> API | -> | Proxy#3 | -> | ElasticSearch & dynamoDB
+Cron -> |Scrape | -> | Proxy#3 | -> API | -> | Proxy#4 | -> | ElasticSearch & dynamoDB
+Cron -> |Scrape | -> | Proxy#1 | -> API | -> | Proxy#4 | -> | ElasticSearch & dynamoDB
 ..... and so on
 
 # Pre-requisites
