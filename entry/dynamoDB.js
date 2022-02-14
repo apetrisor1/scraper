@@ -25,7 +25,8 @@ module.exports.setProxyUrls = async (data) => {
 module.exports.getProxyUrls = async () => {
   const params = {
     TableName,
-    Key: { index: 0 }
+    Key: { index: 0 },
+    ConsistentRead: true
   };
 
   return docClient.get(params).promise()
@@ -47,7 +48,8 @@ module.exports.setRunPermission = async (startStopBoolean) => {
 module.exports.getRunPermission = async () => {
   const params = {
     TableName,
-    Key: { index: 1 }
+    Key: { index: 1 },
+    ConsistentRead: true
   };
 
   return docClient.get(params).promise()
@@ -56,7 +58,8 @@ module.exports.getRunPermission = async () => {
 module.exports.getLastUsedProxy = async () => {
   const params = {
     TableName,
-    Key: { index: 2 }
+    Key: { index: 2 },
+    ConsistentRead: true
   };
 
   return docClient.get(params).promise()
@@ -78,7 +81,8 @@ module.exports.setProxyBusyStatus = async (data) => {
 module.exports.getProxyBusyStatus = async () => {
   const params = {
     TableName,
-    Key: { index: 4 }
+    Key: { index: 4 },
+    ConsistentRead: true
   };
 
   return docClient.get(params).promise()
