@@ -11,8 +11,6 @@ const adjustObjectForOpenSearch = obj => {
       value = value.replace(/\n/g, ``).replace(/\"/g, ``)
     }
 
-    console.log({ value })
-
     switch(key) {
       case "issued_at":
         // Convert format differences that break the opensearch bulk payload
@@ -25,8 +23,6 @@ const adjustObjectForOpenSearch = obj => {
       default:
         adjusted[key] = value
     }
-
-    console.log({ key, value, interes: adjusted[key] })
 
     return adjusted
   }, {})
