@@ -1,5 +1,3 @@
-const { getLatestOpenSearchEntrySourceId } = require('./openSearchService')
-
 const adjustObjectForOpenSearch = obj => {
   if (!obj) return null
 
@@ -30,46 +28,17 @@ const adjustObjectForOpenSearch = obj => {
   }, {})
 }
 
-const buildRelevantDataArray = (data, idAlreadyStored) => {
-  const relevantData = [];
-  for (const entry of data) {
-    if (entry._id === idAlreadyStored) {
-      break
-    } else {
-      relevantData.push(entry)
-    }
-  }
-
-  return relevantData
-}
-
-const extractArrayFromRawData = (rawData) => {
-  const { data } = rawData
-  const { data: { results } } = data
+module.exports.extractArrayFromRawData = (rawData) => {
+  const { data: { results } } = rawData
 
   return results
 }
 
-const logDataSizes = (dataScraped, dataSaved) => {
-  console.log({
-    scraped: dataScraped.length,
-    saved: dataSaved.length
-  })
-}
-
 // Builds the payload according to: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
-module.exports.buildOpenSearchBulkPayload = async (rawData, index) => {
-  const data = extractArrayFromRawData(rawData);
-
-  const latestEntryOwnId = await getLatestOpenSearchEntrySourceId(index);
-
-  const relevantData = buildRelevantDataArray(data, latestEntryOwnId);
-
-  logDataSizes(data, relevantData);
-
-  return relevantData.map(entry => {
+module.exports.buildOpenSearchBulkPayload = (data, index) => {
+  return data.map(entry => {
     const adjustedEntry = adjustObjectForOpenSearch(entry);
 
-    return JSON.stringify({ index: { '_index': index } }) + '\n' + JSON.stringify(adjustedEntry)
+    return JSON.stringify({ index: { '_index': index, '_id': adjustedEntry.id } }) + '\n' + JSON.stringify(adjustedEntry)
   }).join('\n') + '\n'
 }

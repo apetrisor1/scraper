@@ -7,8 +7,13 @@ const serverless = require('serverless-http')
 const app = express()
 app.use(express.json())
 
-const { buildOpenSearchBulkPayload } = require('./helper')
-const { insertBulk } = require('./openSearchService')
+const {
+  buildOpenSearchBulkPayload,
+  extractArrayFromRawData
+} = require('./helper')
+const {
+  insertBulk
+} = require('./openSearchService')
 const {
   setCurrentProxy,
   setProxyBusyStatus
@@ -22,9 +27,11 @@ app.post('/', async (req, res, next) => {
 
     await setCurrentProxy(JSON.parse(req.body))
 
-    const rawData = await axios.get(process.env.DATA_URL)
+    const { data: rawData } = await axios.get(process.env.DATA_URL)
 
-    const openSearchBulkPayload = await buildOpenSearchBulkPayload(rawData, index)
+    const data = extractArrayFromRawData(rawData);
+
+    const openSearchBulkPayload = buildOpenSearchBulkPayload(data, index)
 
     await insertBulk(openSearchBulkPayload)
 

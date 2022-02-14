@@ -52,9 +52,11 @@ app.post('/', async (req, res, next) => {
 
     const nextProxy = await getNextProxy()
 
-    await axios.post(nextProxy, JSON.stringify(nextProxy))
+    const { data } = await axios.post(nextProxy, JSON.stringify(nextProxy))
 
-    return res.send(`triggered ${nextProxy}`)
+    return res.send({
+      proxyUsed: nextProxy
+    })
   } catch (e) {
     return res.status(500).send(JSON.stringify(e))
   }
