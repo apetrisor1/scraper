@@ -9,7 +9,7 @@ app.use(express.json())
 
 const {
   buildOpenSearchBulkPayload,
-  extractArrayFromRawData
+  getBulkOperationStats
 } = require('./helper')
 const {
   insertBulk
@@ -29,15 +29,15 @@ app.post('/', async (req, res, next) => {
 
     const { data: rawData } = await axios.get(process.env.DATA_URL)
 
-    const data = extractArrayFromRawData(rawData);
+    const openSearchBulkPayload = buildOpenSearchBulkPayload(rawData, index)
 
-    const openSearchBulkPayload = buildOpenSearchBulkPayload(data, index)
-
-    await insertBulk(openSearchBulkPayload)
+    const { data: { items } } = await insertBulk(openSearchBulkPayload)
 
     await setProxyBusyStatus(false)
 
-    return res.send(true)
+    return res.send(
+      getBulkOperationStats(items)
+    )
   } catch (e) {
     return res.send(JSON.stringify(e))
   }

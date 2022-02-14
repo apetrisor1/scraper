@@ -28,17 +28,18 @@ const adjustObjectForOpenSearch = obj => {
   }, {})
 }
 
-module.exports.extractArrayFromRawData = (rawData) => {
+/** Builds the payload according to: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html */
+module.exports.buildOpenSearchBulkPayload = (rawData, index) => {
   const { data: { results } } = rawData
 
-  return results
-}
-
-// Builds the payload according to: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
-module.exports.buildOpenSearchBulkPayload = (data, index) => {
-  return data.map(entry => {
+  return results.map(entry => {
     const adjustedEntry = adjustObjectForOpenSearch(entry);
 
     return JSON.stringify({ index: { '_index': index, '_id': adjustedEntry.id } }) + '\n' + JSON.stringify(adjustedEntry)
   }).join('\n') + '\n'
 }
+
+module.exports.getBulkOperationStats = (items) => ({
+  created: items.reduce((acc, val) => (acc += val.index.result === 'created' ? 1 : 0), 0),
+  updated: items.reduce((acc, val) => (acc += val.index.result === 'updated' ? 1 : 0), 0)
+})

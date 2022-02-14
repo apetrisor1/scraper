@@ -52,9 +52,11 @@ app.post('/', async (req, res, next) => {
 
     const nextProxy = await getNextProxy()
 
-    const { data } = await axios.post(nextProxy, JSON.stringify(nextProxy))
+    const { data: bulkInsertResults } = await axios.post(nextProxy, JSON.stringify(nextProxy))
+    // this is a good place to adjust the cron-job programatically according to bulk insert results
 
     return res.send({
+      ...bulkInsertResults,
       proxyUsed: nextProxy
     })
   } catch (e) {
