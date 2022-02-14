@@ -92,7 +92,7 @@ The proxy scripts rely on the entry service being placed in a folder named "entr
 The scrape service relies on the ```.env``` key <b>PROXY_DATA_URLS</b>, and that entry is auto-filled by the proxy scripts. Do not change that key unless adjusting the scripts as well.
 
 # Use-case specific functions
-```extractFormattedData```, ```replacer```. Adjust these to fit your needs.
+```extractArrayFromRawData```, ```adjustObjectForOpenSearch```. Adjust these to fit your needs.
 
 # License
 Copyright 2022 Adrian Petrisor (adrian.petrisor@outlook.com)

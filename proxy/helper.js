@@ -28,7 +28,7 @@ const adjustObjectForOpenSearch = obj => {
   }, {})
 }
 
-const extractArray = (rawData) => {
+const extractArrayFromRawData = (rawData) => {
   const { data } = rawData
   const { data: { results } } = data
 
@@ -37,7 +37,7 @@ const extractArray = (rawData) => {
 
 // Opensearch bulk payload follows elasticsearch pattern: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
 module.exports.buildOpenSearchBulkPayload = (rawData, index) => {
-  return extractArray(rawData).map(entry => {
+  return extractArrayFromRawData(rawData).map(entry => {
     const adjustedEntry = adjustObjectForOpenSearch(entry);
 
     return JSON.stringify({ index: { '_index': index } }) + '\n' + JSON.stringify(adjustedEntry)
