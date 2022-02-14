@@ -7,36 +7,20 @@ const serverless = require('serverless-http')
 const app = express()
 app.use(express.json())
 
+const { buildOpenSearchBulkPayload } = require('./helper');
 const {
   setCurrentProxy,
   setProxyBusyStatus
 } = require('./dynamoDB')
 
-const extractFormattedData = (rawData) => {
-  const { data } = rawData
-  const { data: { results } } = data
-
-  return results
-}
-
-const insertIntoOpenSearch = async (payload) => {
-  const replacer = (name, val) => {
-    switch(name) {
-      case "issued_at":
-        return val ? parseInt(val) : null
-      default:
-        return val
-    }
-  }
-
+const insertBulk = async (payload) => {
   const username = process.env.OPENSEARCH_USERNAME
   const password = process.env.OPENSEARCH_PASSWORD
   const domain = process.env.OPENSEARCH_DOMAIN
-  const index = process.env.OPENSEARCH_INDEX
 
   return axios.post(
-    `${domain}/${index}/_doc/1`,
-    JSON.stringify({ data: payload }, replacer),
+    `${domain}/_bulk`,
+    Buffer.from(payload),
     {
       auth: { username, password },
       headers: { 'Content-Type': 'application/json' }
@@ -45,16 +29,15 @@ const insertIntoOpenSearch = async (payload) => {
 }
 
 app.post('/', async (req, res, next) => {
+  const index = process.env.OPENSEARCH_INDEX
+
   try {
-    const rawData = await axios.get(process.env.DATA_URL)
-
     await setProxyBusyStatus(true)
-
     await setCurrentProxy(JSON.parse(req.body))
 
-    await insertIntoOpenSearch(
-      extractFormattedData(rawData)
-    )
+    const rawData = await axios.get(process.env.DATA_URL)
+    const openSearchBulkPayload = buildOpenSearchBulkPayload(rawData, index)
+    await insertBulk(openSearchBulkPayload)
 
     await setProxyBusyStatus(false)
 
