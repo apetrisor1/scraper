@@ -1,3 +1,40 @@
+const { divide, pow, bignumber } = require('mathjs')
+
+const convertEpochToJavascriptTimestamp = (timestamp) => (
+  timestamp && timestamp.toString().length === 10 ?
+      timestamp.toString() + "000" :
+      timestamp
+)
+
+const convertSubMillisecondTimestampToJavascriptTimestamp = (timestamp) => (
+  timestamp && timestamp.toString().length > 13 ?
+      timestamp.toString().slice(0, 13) :
+      timestamp
+)
+
+/* Turns long string price into a smaller (divided by 10pow20) floating point number. */
+const getShortCryptoPrice = (price) => {
+  try {
+    let result = bignumber(price)
+    result = divide(result, pow(10, 20))
+    return parseFloat(result)
+  } catch(e) {
+    console.log('ERR getShortCryptoPrice', JSON.stringify(e))
+    return 0
+  }
+}
+
+getIsoDateOrNull = (timestamp) => {
+  try {
+    timestamp = convertEpochToJavascriptTimestamp(timestamp)
+    timestamp = convertSubMillisecondTimestampToJavascriptTimestamp(timestamp)
+    return new Date(parseInt(timestamp)).toISOString()
+  } catch(e) {
+      console.log('ERR getIsoDateOrNull', JSON.stringify(e))
+      return null
+  }
+}
+
 const adjustObjectForOpenSearch = obj => {
   if (!obj) return null
 
@@ -13,8 +50,14 @@ const adjustObjectForOpenSearch = obj => {
 
     switch(key) {
       case "issued_at":
-        // Convert format differences that break the opensearch bulk payload
-        adjusted[key] = value ? parseInt(value) : null
+      case "expires_at":
+      case "starts_at":
+      case "updated_at":
+        adjusted[key] = getIsoDateOrNull(value)
+        break
+      case "lowest_price":
+      case "price":
+        adjusted[key] = getShortCryptoPrice(value)
         break
       case "_id":
         // Bulk opensearch entries can't have _id field
@@ -29,13 +72,20 @@ const adjustObjectForOpenSearch = obj => {
 }
 
 /** Builds the payload according to: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html */
-module.exports.buildOpenSearchBulkPayload = (rawData, index) => {
+module.exports.buildOpenSearchBulkPayload = (rawData, index, aggregateEntries = false) => {
   const { data: { results } } = rawData
 
   return results.map(entry => {
     const adjustedEntry = adjustObjectForOpenSearch(entry);
 
-    return JSON.stringify({ index: { '_index': index, '_id': adjustedEntry.id } }) + '\n' + JSON.stringify(adjustedEntry)
+    let indexAndIdObject = { '_index': index }
+    /* Save entries with their own ID and overwrite them if receiving an updated entry in raw data. 
+    By default, we'll save each entry as a separate record, even if it's an updated version of the same entry*/
+    if (aggregateEntries) {
+      Object.assign(indexAndIdObject, { '_id': adjustedEntry.id })
+    }
+
+    return JSON.stringify({ index: indexAndIdObject }) + '\n' + JSON.stringify(adjustedEntry)
   }).join('\n') + '\n'
 }
 

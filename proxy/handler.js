@@ -39,6 +39,7 @@ app.post('/', async (req, res, next) => {
       getBulkOperationStats(items)
     )
   } catch (e) {
+    console.log('ERR main handler', JSON.stringify(e))
     return res.send(JSON.stringify(e))
   }
 })
