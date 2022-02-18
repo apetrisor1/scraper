@@ -26,5 +26,10 @@ provider:
 functions:
   startScrapeFlow:
     handler: handler.handler
+    maximumRetryAttempts: 0
+    timeout: 900
+    provisionedConcurrency: 1
+    reservedConcurrency: 1
     events:
       - httpApi: '*'
+      - schedule: rate(1 minute)

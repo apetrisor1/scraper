@@ -35,32 +35,31 @@ const getNextProxy = async () => {
   }
 }
 
-app.post('/', async (req, res, next) => {
+app.get('/', async (req, res, next) => {
   try {
     const { Item: { data: shouldContinue } } = await getRunPermission()
 
     if (!shouldContinue) {
       // this is a good place to stop the cron-job programatically
-      return res.send("Stopped")
+      return res.send('Entry point not yet configured. POST root/start to enable flow start.')
     }
 
     const { Item: { data: proxiesAreBusy } } = await getProxyBusyStatus()
 
     if (proxiesAreBusy) {
-      return res.send("Proxies are busy")
+      return res.send('Proxies are busy')
     }
 
-    const nextProxy = await getNextProxy()
+    const proxyUsed = await getNextProxy()
 
-    const { data: bulkInsertResults } = await axios.post(nextProxy, JSON.stringify(nextProxy))
-    // this is a good place to adjust the cron-job programatically according to bulk insert results
+    const { data: bulkInsertResults } = await axios.post(proxyUsed, JSON.stringify(proxyUsed))
 
-    return res.send({
-      ...bulkInsertResults,
-      proxyUsed: nextProxy
-    })
+    const result = { ...bulkInsertResults, proxyUsed }
+    console.log(result)
+
+    return res.send(result)
   } catch (e) {
-    return res.status(500).send(JSON.stringify(e))
+    return res.send(JSON.stringify(e))
   }
 })
 

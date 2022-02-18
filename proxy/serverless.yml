@@ -26,5 +26,9 @@ provider:
 functions:
   scrape:
     handler: handler.handler
+    maximumRetryAttempts: 0
+    timeout: 10
+    provisionedConcurrency: 1
+    reservedConcurrency: 1
     events:
       - httpApi: '*'
