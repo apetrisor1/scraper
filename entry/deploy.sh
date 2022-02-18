@@ -7,7 +7,7 @@ FILE=./proxy-urls.txt
 if [ -s "$FILE" ]; then
     echo "\nOK: Environment variables file: $FILE exists and is not empty.\n"
 
-    echo PROXY_DATA_URLS=$(awk -v RS='' '{gsub("\n", ","); print}' $FILE) > .env
+    echo \\nPROXY_DATA_URLS=$(awk -v RS='' '{gsub("\n", ","); print}' $FILE) >> .env
     echo "Filled .env with the required values.\n"
 
     # Deploy is done in this step

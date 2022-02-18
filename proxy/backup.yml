@@ -1,4 +1,4 @@
-service: proxy5
+service: proxy
 frameworkVersion: '3'
 
 provider:

@@ -68,8 +68,6 @@ const adjustObjectForOpenSearch = obj => {
         adjusted[key] = value
     }
 
-    adjusted['indexed_at'] = new Date().getTime()
-
     return adjusted
   }, {})
 }
@@ -94,3 +92,9 @@ module.exports.getBulkOperationStats = (items) => ({
   created: items.reduce((acc, val) => (acc += val.index.result === 'created' ? 1 : 0), 0),
   updated: items.reduce((acc, val) => (acc += val.index.result === 'updated' ? 1 : 0), 0)
 })
+
+module.exports.getIdsFromRawData = (rawData) => {
+  const { data: { results } } = rawData
+
+  return results.map(item => item._id)
+}

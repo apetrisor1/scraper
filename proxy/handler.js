@@ -9,29 +9,38 @@ app.use(express.json())
 
 const {
   buildOpenSearchBulkPayload,
-  getBulkOperationStats
+  getBulkOperationStats,
+  getIdsFromRawData
 } = require('./helper')
 const {
   insertBulk
 } = require('./openSearchService')
 const {
   setCurrentProxy,
-  setProxyBusyStatus
+  setProxyBusyStatus,
+  setLatestProcessedSourceIds
 } = require('./dynamoDB')
 
-app.post('/', async (req, res, next) => {
+app.post('/', async ({ body }, res, next) => {
   const index = process.env.OPENSEARCH_INDEX
 
   try {
     await setProxyBusyStatus(true)
 
-    await setCurrentProxy(JSON.parse(req.body))
+    const parsedBody = JSON.parse(body);
+    const { dataURL, proxyUsed } = parsedBody;
 
-    const { data: rawData } = await axios.get(process.env.DATA_URL)
+    await setCurrentProxy(proxyUsed)
+
+    const { data: rawData } = await axios.get(dataURL)
 
     const openSearchBulkPayload = buildOpenSearchBulkPayload(rawData, index)
 
     const { data: { items } } = await insertBulk(openSearchBulkPayload)
+
+    await setLatestProcessedSourceIds(
+      getIdsFromRawData(rawData)
+    )
 
     await setProxyBusyStatus(false)
 

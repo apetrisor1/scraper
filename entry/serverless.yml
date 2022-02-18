@@ -32,4 +32,4 @@ functions:
     reservedConcurrency: 1
     events:
       - httpApi: '*'
-      - schedule: rate(1 minute)
+      # - schedule: rate(1 minute)
