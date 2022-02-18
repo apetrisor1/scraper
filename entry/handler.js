@@ -76,7 +76,7 @@ const runLoop = async ({ skip, latestEntryId }, res) => {
     console.log('Sleeping 10 seconds then getting calling next lambda for some more')
 
     setTimeout(async () => {
-      await runLoop({ skip: skip + 30, latestEntryId })
+      await runLoop({ skip: skip + 30, latestEntryId }, res)
     }, 10000)
   } else {
     console.log('Got everything')

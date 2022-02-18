@@ -7,7 +7,7 @@ module.exports.getLatestEntryId = async () => {
   const username = process.env.OPENSEARCH_USERNAME
   const password = process.env.OPENSEARCH_PASSWORD
   const domain = process.env.OPENSEARCH_DOMAIN
-  const index = process.env.OPENSEARCH_DOMAIN
+  const index = process.env.OPENSEARCH_INDEX
 
   try {
     const response = await axios.get(`${domain}/${index}/_search?size=1&sort=updated_at:desc&_source=id`, {
