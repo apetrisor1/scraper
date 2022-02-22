@@ -13,7 +13,10 @@ const {
   setProxyBusyStatus,
   getProxyBusyStatus,
   getLastUsedProxy,
+  getLatestProcessedSourceIds
 } = require('./dynamoDB')
+
+const { getLatestEntryId } = require('./openSearchService')
 
 const getNextProxy = async () => {
   const proxyUrls = process.env.PROXY_DATA_URLS.split(',')
@@ -35,36 +38,70 @@ const getNextProxy = async () => {
   }
 }
 
+const runLoop = async ({ skip, latestEntryId }, res) => {
+  const dataURL = skip ? process.env.DATA_URL + `&__skip=${skip}` : process.env.DATA_URL
+  
+  const { Item: { data: shouldContinue } } = await getRunPermission()
+
+  if (!shouldContinue) {
+    // this is a good place to stop the cron-job programatically
+    console.log('Entry point not yet configured. POST root/start to enable flow start.')
+    return res.send('Entry point not yet configured. POST root/start to enable flow start.')
+  }
+
+  const { Item: { data: proxiesAreBusy } } = await getProxyBusyStatus()
+
+  if (proxiesAreBusy) {
+    console.log('Proxies are busy')
+    return res.send('Proxies are busy')
+  }
+
+  const proxyUsed = await getNextProxy()
+
+  const { data: bulkInsertResults } = await axios.post(proxyUsed, JSON.stringify({
+    dataURL,
+    proxyUsed
+  }))
+
+  console.log({ ...bulkInsertResults, proxyUsed, dataURL })
+
+  const { Item: { data: idsIndexedLast } } = await getLatestProcessedSourceIds();
+
+  if (!idsIndexedLast.includes(latestEntryId)) {
+    console.log('Sleeping 10 seconds then calling next proxy for the next page')
+    console.log(
+      'IDs indexed by last proxy execution ', idsIndexedLast,
+      'do not contain latest open search entry:', latestEntryId
+    )
+
+    setTimeout(async () => {
+      await runLoop({ skip: skip + 30, latestEntryId }, res)
+    }, 10000)
+  } else {
+    console.log('Got everything')
+    return res.send('Got everything')
+  }
+}
+
 app.get('/', async (req, res, next) => {
   try {
-    const { Item: { data: shouldContinue } } = await getRunPermission()
+    const latestEntryId = await getLatestEntryId()
 
-    if (!shouldContinue) {
-      // this is a good place to stop the cron-job programatically
-      return res.send('Entry point not yet configured. POST root/start to enable flow start.')
-    }
+    const result = await runLoop({ skip: null, latestEntryId }, res)
 
-    const { Item: { data: proxiesAreBusy } } = await getProxyBusyStatus()
-
-    if (proxiesAreBusy) {
-      return res.send('Proxies are busy')
-    }
-
-    const proxyUsed = await getNextProxy()
-
-    const { data: bulkInsertResults } = await axios.post(proxyUsed, JSON.stringify(proxyUsed))
-
-    const result = { ...bulkInsertResults, proxyUsed }
-    console.log(result)
-
-    return res.send(result)
+    return result
   } catch (e) {
+    await setProxyBusyStatus(false)
     return res.send(JSON.stringify(e))
   }
 })
 
 app.post('/start', async (req, res, next) => {
   try {
+    if (!process.env.DATA_URL) {
+      throw new Error('API URL not set in .env')
+    }
+
     if (!process.env.PROXY_DATA_URLS) {
       throw new Error('Proxy URLs not set in .env')
     }

@@ -14,8 +14,8 @@ echo "Removing $HOW_MANY proxies from AWS..."
 
 for (( i=1; i<=$HOW_MANY; i++ ))
 do
+  echo "\Removingproxy-$i.."
   perl -i -pe"s/service: proxy.*/service: proxy$i/g" ./serverless.yml
-
   sls remove
 done
 

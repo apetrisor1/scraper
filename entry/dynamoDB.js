@@ -87,3 +87,13 @@ module.exports.getProxyBusyStatus = async () => {
 
   return docClient.get(params).promise()
 }
+
+module.exports.getLatestProcessedSourceIds = async () => {
+  const params = {
+    TableName,
+    Key: { index: 5 },
+    ConsistentRead: true
+  };
+
+  return docClient.get(params).promise()
+}

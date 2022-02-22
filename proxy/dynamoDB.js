@@ -34,3 +34,16 @@ module.exports.setProxyBusyStatus = async (data) => {
 
   return docClient.put(params).promise()
 }
+
+module.exports.setLatestProcessedSourceIds = async (data) => {
+  const params = {
+    TableName,
+    Item: {
+      index: 5,
+      data,
+      description: 'Source IDs processed last by the most recent proxy invocation'
+    }
+  };
+
+  return docClient.put(params).promise()
+}

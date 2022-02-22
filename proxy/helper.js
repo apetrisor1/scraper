@@ -68,8 +68,6 @@ const adjustObjectForOpenSearch = obj => {
         adjusted[key] = value
     }
 
-    adjusted['indexed_at'] = new Date().getTime()
-
     return adjusted
   }, {})
 }
@@ -92,5 +90,17 @@ module.exports.buildOpenSearchBulkPayload = (rawData, index, aggregateEntries = 
 
 module.exports.getBulkOperationStats = (items) => ({
   created: items.reduce((acc, val) => (acc += val.index.result === 'created' ? 1 : 0), 0),
-  updated: items.reduce((acc, val) => (acc += val.index.result === 'updated' ? 1 : 0), 0)
+  updated: items.reduce((acc, val) => (acc += val.index.result === 'updated' ? 1 : 0), 0),
+  // unknownCounter: items.reduce((acc, val) => (acc += !['created', 'updated'].includes(val.index.result) ? 1 : 0), 0),
+  // unknownList: items.filter(item => {
+  //   if (!item.index || !item.index.result || !['created', 'updated'].includes(item.index.result)) {
+  //     return item
+  //   }
+  // })
 })
+
+module.exports.getIdsFromRawData = (rawData) => {
+  const { data: { results } } = rawData
+
+  return results.map(item => item._id)
+}
