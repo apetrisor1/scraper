@@ -88,8 +88,11 @@ app.get('/', async (req, res, next) => {
   try {
     const latestEntryId = await getLatestEntryId()
 
-    return runLoop({ skip: null, latestEntryId }, res)
+    const result = await runLoop({ skip: null, latestEntryId }, res)
+
+    return result
   } catch (e) {
+    await setProxyBusyStatus(false)
     return res.send(JSON.stringify(e))
   }
 })
