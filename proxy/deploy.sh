@@ -14,6 +14,7 @@ echo "Deploying $HOW_MANY proxies to AWS..."
 
 for (( i=1; i<=$HOW_MANY; i++ ))
 do
+  echo "\Deploying proxy-$i.."
   perl -i -pe"s/service: proxy.*/service: proxy$i/g" ./serverless.yml
   sls deploy
   sls info | grep endpoint | sed 's/endpoint: ANY - //g' >> ../entry/proxy-urls.txt

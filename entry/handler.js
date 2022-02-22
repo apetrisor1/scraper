@@ -41,8 +41,6 @@ const getNextProxy = async () => {
 const runLoop = async ({ skip, latestEntryId }, res) => {
   const dataURL = skip ? process.env.DATA_URL + `&__skip=${skip}` : process.env.DATA_URL
   
-  console.log({ dataURL, latestEntryId })
-
   const { Item: { data: shouldContinue } } = await getRunPermission()
 
   if (!shouldContinue) {
@@ -65,15 +63,16 @@ const runLoop = async ({ skip, latestEntryId }, res) => {
     proxyUsed
   }))
 
-  const result = { ...bulkInsertResults, proxyUsed }
-  console.log(result)
+  console.log({ ...bulkInsertResults, proxyUsed, dataURL })
 
   const { Item: { data: idsIndexedLast } } = await getLatestProcessedSourceIds();
 
-  console.log('ids indexed last ', idsIndexedLast)
-
   if (!idsIndexedLast.includes(latestEntryId)) {
-    console.log('Sleeping 10 seconds then getting calling next lambda for some more')
+    console.log('Sleeping 10 seconds then calling next proxy for the next page')
+    console.log(
+      'IDs indexed by last proxy execution ', idsIndexedLast,
+      'do not contain latest open search entry:', latestEntryId
+    )
 
     setTimeout(async () => {
       await runLoop({ skip: skip + 30, latestEntryId }, res)

@@ -14,8 +14,8 @@ echo "Creating file ../entry/proxy-urls with the URLs of $HOW_MANY proxies from 
 
 for (( i=1; i<=$HOW_MANY; i++ ))
 do
+  echo "\Retrieving info for proxy-$i.."
   perl -i -pe"s/service: proxy.*/service: proxy$i/g" ./serverless.yml
-
   sls info | grep endpoint | sed 's/endpoint: ANY - //g' >> ../entry/proxy-urls.txt
 done
 
