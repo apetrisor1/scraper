@@ -49,6 +49,8 @@ app.post('/', async ({ body }, res, next) => {
     )
   } catch (e) {
     console.log('ERR main handler', JSON.stringify(e))
+    console.log('Setting proxy busy status to false - entry lambda can now retry proxies')
+    await setProxyBusyStatus(false)
     return res.send(JSON.stringify(e))
   }
 })
