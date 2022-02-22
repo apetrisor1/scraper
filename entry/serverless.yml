@@ -26,7 +26,6 @@ provider:
 functions:
   startScrapeFlow:
     handler: handler.handler
-    maximumRetryAttempts: 0
     timeout: 900
     # provisionedConcurrency: 1 #leaving these in makes the schedule not trigger
     # reservedConcurrency: 1 #leaving these in makes the schedule not trigger
