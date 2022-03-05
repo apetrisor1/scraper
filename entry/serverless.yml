@@ -6,6 +6,7 @@ provider:
   stage: prod
   runtime: nodejs14.x
   region: eu-central-1
+  profile: scraper
   iam:
     role:
       statements:

@@ -1,8 +1,6 @@
 require('dotenv').config()
 const axios = require('axios')
 
-
-
 module.exports.getLatestEntryId = async () => {
   const username = process.env.OPENSEARCH_USERNAME
   const password = process.env.OPENSEARCH_PASSWORD
